@@ -44,6 +44,7 @@ const ContentWrapper = styled('main')(({ theme }) => ({
 }))
 
 const VerticalLayout = props => {
+  console.log(props, 'asdasd')
   // ** Props
   const { hidden, settings, children, scrollToTop, footerProps, contentHeightFixed, verticalLayoutProps } = props
 

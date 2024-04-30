@@ -65,23 +65,26 @@ const AuthProvider = ({ children }) => {
     axios
       .post(process.env.NEXT_PUBLIC_BASE_URL + authConfig.loginEndpoint, params)
       .then(async response => {
-        console.log(response)
-
-        // params.rememberMe
-        //   ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-        //   : null
-        // const returnUrl = router.query.returnUrl
-        // setUser({ ...response.data.userData })
-        // params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-        // const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        // router.replace(redirectURL)
+        params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.token) : null
+        const returnUrl = router.query.returnUrl
+        setUser({ ...response.data.user })
+        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.user)) : null
+        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        router.replace(redirectURL)
       })
       .catch(err => {
-        console.log(err.response.data.errors, errorCallback)
-        if (err.response && err.response.data && err.response.data.errors && err.response.data.errors.length > 0) {
-          errorCallback(err.response.data.errors[0])
+        if (err.response && err.response.data && err.response.data.message) {
+          return errorCallback(err.response.data.message)
+        } else if (
+          err.response &&
+          err.response.data &&
+          err.response.data.errors &&
+          err.response.data.errors.length > 0
+        ) {
+          return errorCallback(err.response.data.errors[0])
+        } else {
+          return errorCallback('Something went wrong, please try again')
         }
-        if (errorCallback) errorCallback(err)
       })
   }
 

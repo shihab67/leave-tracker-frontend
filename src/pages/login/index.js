@@ -129,13 +129,14 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
-  const handleError = value => {
-    setError('email', { type: 'manual', message: value })
-  }
-
   const onSubmit = data => {
     const { email, password } = data
-    auth.login({ email, password, rememberMe }, handleError)
+    auth.login({ email, password, rememberMe }, (msg) => {
+      setError('email', {
+        type: 'manual',
+        message: msg
+      })
+    })
   }
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
