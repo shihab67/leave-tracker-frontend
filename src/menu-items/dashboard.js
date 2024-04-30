@@ -7,15 +7,21 @@ const icons = { IconDashboard };
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
 const dashboard = {
-  id: 'dashboard',
-  title: 'Dashboard',
   type: 'group',
   children: [
     {
-      id: 'default',
+      id: 'dashboard',
       title: 'Dashboard',
       type: 'item',
-      url: '/dashboard/default',
+      url: '/dashboard',
+      icon: icons.IconDashboard,
+      breadcrumbs: false
+    },
+    {
+      id: 'leave-request',
+      title: 'Leave Request',
+      type: 'item',
+      url: '/leave-request',
       icon: icons.IconDashboard,
       breadcrumbs: false
     }

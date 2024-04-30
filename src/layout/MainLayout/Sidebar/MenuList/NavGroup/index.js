@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Divider, List, Typography } from '@mui/material';
+import { List, Typography } from '@mui/material';
 
 // project imports
 import NavItem from '../NavItem';
@@ -47,9 +47,6 @@ const NavGroup = ({ item }) => {
       >
         {items}
       </List>
-
-      {/* group divider */}
-      <Divider sx={{ mt: 0.25, mb: 1.25 }} />
     </>
   );
 };
