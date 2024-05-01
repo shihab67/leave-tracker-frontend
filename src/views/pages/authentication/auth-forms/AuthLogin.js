@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
@@ -16,10 +15,11 @@ import {
   Stack,
   Typography
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 // third party
-import * as Yup from 'yup';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
@@ -28,12 +28,18 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from 'store/reducer';
+import { store } from '../../../../store/modules/adminLogin/adminLoginSlice';
+import AuthContext from '../../../../store/modules/authContext';
 
 const FirebaseLogin = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const [checked, setChecked] = useState(true);
-
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const authCtx = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -47,8 +53,8 @@ const FirebaseLogin = ({ ...others }) => {
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          email: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -60,14 +66,48 @@ const FirebaseLogin = ({ ...others }) => {
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
+
+              // filters
+              const wait = setTimeout(async () => {
+                clearTimeout(wait);
+
+                try {
+                  // DISPATCH
+                  const response = await dispatch(store({ email: values.email, password: values.password }));
+                  console.log(response);
+
+                  if (
+                    response.payload &&
+                    response.payload.response &&
+                    response.payload.response.data &&
+                    response.payload.response.data.message
+                  ) {
+                    setErrors({ submit: response.payload.response.data.message });
+                    return;
+                  } else if (response.payload && response.payload.data && response.payload.data.token && response.payload.data.user) {
+                    const token = response.payload.data.token;
+                    const userInfo = response.payload.data.user;
+
+                    authCtx.login({ ...userInfo, ...{ token: token } });
+
+                    // Navigate to '/admin/home' after login
+                    setTimeout(() => {
+                      navigate('/dashboard');
+                    }, 2000);
+                  } else {
+                    setErrors({ submit: 'Something went wrong' });
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+              });
             }
           } catch (err) {
-            console.error(err);
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
+            console.log('my error', error);
+            // Set status, errors, and submitting state
+            setStatus({ success: false });
+            setErrors({ submit: error.message });
+            setSubmitting(false);
           }
         }}
       >
