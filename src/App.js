@@ -29,7 +29,8 @@ const App = () => {
     // SET AUTHORIZATION REQUEST
 
     // IS NOT LOGGED IN
-    if (!authCtx.isLoggedIn) {
+    const requestedRoute = window.location.pathname;
+    if (!authCtx.isLoggedIn && requestedRoute !== '/register') {
       return navigate('/');
     }
     // HAS ERROR ON REQUEST
