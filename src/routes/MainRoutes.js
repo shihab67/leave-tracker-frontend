@@ -6,6 +6,7 @@ import Loadable from 'ui-component/Loadable';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
+const LeaveRequest = Loadable(lazy(() => import('views/leave-request')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -16,8 +17,17 @@ const MainRoutes = {
       path: 'dashboard',
       children: [
         {
-          path: 'default',
+          path: '',
           element: <DashboardDefault />
+        }
+      ]
+    },
+    {
+      path: 'leave-request',
+      children: [
+        {
+          path: '',
+          element: <LeaveRequest />
         }
       ]
     }

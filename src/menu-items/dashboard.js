@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard } from '@tabler/icons-react';
+import { IconDashboard, IconForms } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard };
+const icons = { IconDashboard, IconForms };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -22,7 +22,7 @@ const dashboard = {
       title: 'Leave Request',
       type: 'item',
       url: '/leave-request',
-      icon: icons.IconDashboard,
+      icon: icons.IconForms,
       breadcrumbs: false
     }
   ]
