@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
 import axios from 'axios';
+import React, { useCallback, useState } from 'react';
 
 const AuthContext = React.createContext({
   currentUser: {},
@@ -30,7 +30,7 @@ export const AuthContextProvider = (props) => {
   const loginHandler = (currentUserData) => {
     const tokenData = Object.assign(
       {},
-      { email: currentUserData.email, name: currentUserData.name, last_name: currentUserData.last_name, token: currentUserData.token }
+      { email: currentUserData.email, name: currentUserData.name, role: currentUserData.role, token: currentUserData.token }
     );
     setCurrentUser(tokenData);
     localStorage.setItem('currentUser', JSON.stringify(tokenData));
