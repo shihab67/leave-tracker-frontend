@@ -1,19 +1,33 @@
+import '@fontsource/inter';
+import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import Textarea from '@mui/joy/Textarea';
 import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Formik } from 'formik';
-import React, { useState } from 'react';
+import useScriptRef from 'hooks/useScriptRef';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Bounce, toast } from 'react-toastify';
+import { createLeave } from 'store/modules/adminLogin/adminLoginSlice';
+import AuthContext from 'store/modules/authContext';
+import { useAppDispatch } from 'store/reducer';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import * as Yup from 'yup';
 
 export default function CreateLeave({ ...others }) {
+  const scriptedRef = useScriptRef();
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [reason, setReason] = useState();
+  const dispatch = useAppDispatch();
+  const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -27,7 +41,7 @@ export default function CreateLeave({ ...others }) {
             submit: null
           }}
           validationSchema={Yup.object().shape({
-            leave_type: Yup.string().required('Leave Type is required'),
+            leave_type: Yup.number().required('Leave Type is required'),
             start_date: Yup.date().required('Start Date is required'),
             end_date: Yup.date().required('End Date is required'),
             reason: Yup.string().max(255).required('Reason is required')
@@ -37,44 +51,54 @@ export default function CreateLeave({ ...others }) {
               if (scriptedRef.current) {
                 setStatus({ success: true });
                 setSubmitting(false);
+                console.log(values);
 
-                // filters
-                const wait = setTimeout(async () => {
-                  clearTimeout(wait);
+                try {
+                  // DISPATCH
+                  const response = await dispatch(createLeave({ data: values, token: authCtx.currentUser.token }));
+                  console.log(response);
+                  if (
+                    response.payload &&
+                    response.payload.response &&
+                    response.payload.response.data &&
+                    response.payload.response.data.message
+                  ) {
+                    setErrors({ submit: response.payload.response.data.message });
+                    return;
+                  } else if (
+                    response.payload &&
+                    response.payload.response &&
+                    response.payload.response.data &&
+                    response.payload.response.data.errors &&
+                    response.payload.response.data.errors.length > 0
+                  ) {
+                    setErrors({ submit: response.payload.response.data.errors[0] });
+                  } else if (response.payload && response.payload.status && response.payload.status === 'success') {
+                    toast.success('Leave Request created successfully!', {
+                      position: 'top-right',
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: 'colored',
+                      transition: Bounce
+                    });
 
-                  try {
-                    // DISPATCH
-                    const response = await dispatch(store({ email: values.email, password: values.password }));
-                    console.log(response);
-                    if (
-                      response.payload &&
-                      response.payload.response &&
-                      response.payload.response.data &&
-                      response.payload.response.data.message
-                    ) {
-                      setErrors({ submit: response.payload.response.data.message });
-                      return;
-                    } else if (response.payload && response.payload.message) {
-                      setErrors({ submit: response.payload.message });
-                    } else if (response.payload && response.payload.data && response.payload.data.token && response.payload.data.user) {
-                      const token = response.payload.data.token;
-                      const userInfo = response.payload.data.user;
-
-                      authCtx.login({ ...userInfo, ...{ token: token } });
-
-                      // Navigate to '/dashboard' after login
-                      setTimeout(() => {
-                        navigate('/dashboard');
-                      }, 2000);
-                    } else {
-                      setErrors({ submit: 'Something went wrong' });
-                    }
-                  } catch (error) {
-                    console.log(error);
+                    // Navigate to '/leave-request' after login
+                    setTimeout(() => {
+                      navigate('/leave-request', { replace: true });
+                    }, 3000);
+                  } else {
+                    setErrors({ submit: 'Something went wrong' });
                   }
-                });
+                } catch (error) {
+                  console.log(error);
+                }
               }
             } catch (err) {
+              console.error(err);
               // Set status, errors, and submitting state
               setStatus({ success: false });
               setErrors({ submit: error.message });
@@ -95,9 +119,9 @@ export default function CreateLeave({ ...others }) {
                       label="Leave Type"
                       onChange={handleChange}
                     >
-                      <MenuItem value={'casual_leave'}>Casual Leave</MenuItem>
-                      <MenuItem value={'sick_leave'}>Sick Leave</MenuItem>
-                      <MenuItem value={'emergency_leave'}>Emergency Leave</MenuItem>
+                      <MenuItem value={1}>Casual Leave</MenuItem>
+                      <MenuItem value={2}>Sick Leave</MenuItem>
+                      <MenuItem value={3}>Emergency Leave</MenuItem>
                     </Select>
                   </FormControl>
                   {touched.leave_type && errors.leave_type && (
@@ -117,7 +141,7 @@ export default function CreateLeave({ ...others }) {
                         value={startDate}
                         onChange={(newValue) => {
                           setStartDate(newValue);
-                          handleChange({ target: { name: 'start_date', value: newValue } });
+                          handleChange({ target: { name: 'start_date', value: newValue.$d.toISOString() } });
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -140,7 +164,7 @@ export default function CreateLeave({ ...others }) {
                         value={endDate}
                         onChange={(newValue) => {
                           setEndDate(newValue);
-                          handleChange({ target: { name: 'end_date', value: newValue } });
+                          handleChange({ target: { name: 'end_date', value: newValue.$d.toISOString() } });
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -155,7 +179,20 @@ export default function CreateLeave({ ...others }) {
 
                 <Grid md={12} xs={12} item>
                   <FormControl fullWidth error={Boolean(touched.reason && errors.reason)}>
-                    <Textarea placeholder="Type anything…" />
+                    <JoyCssVarsProvider>
+                      <CssBaseline enableColorScheme />
+                      <Textarea
+                        placeholder="Reason..."
+                        variant="outlined"
+                        minRows={4}
+                        name="reason"
+                        value={reason}
+                        onChange={(newValue) => {
+                          setReason(newValue.target.value);
+                          handleChange({ target: { name: 'reason', value: newValue.target.value } });
+                        }}
+                      />
+                    </JoyCssVarsProvider>
                     {touched.reason && errors.reason && (
                       <FormHelperText error id="standard-weight-helper-text-start-date">
                         {errors.reason}
@@ -164,27 +201,31 @@ export default function CreateLeave({ ...others }) {
                   </FormControl>
                 </Grid>
 
-                {errors.submit && (
-                  <Box sx={{ mt: 3 }}>
-                    <FormHelperText error>{errors.submit}</FormHelperText>
-                  </Box>
-                )}
+                <Grid md={12} xs={12} item>
+                  {errors.submit && (
+                    <Box sx={{ mt: 3 }}>
+                      <FormHelperText error>{errors.submit}</FormHelperText>
+                    </Box>
+                  )}
+                </Grid>
 
-                <Box sx={{ mt: 2 }}>
-                  <AnimateButton>
-                    <Button
-                      disableElevation
-                      disabled={isSubmitting}
-                      fullWidth
-                      size="large"
-                      type="submit"
-                      variant="contained"
-                      color="secondary"
-                    >
-                      Sign in
-                    </Button>
-                  </AnimateButton>
-                </Box>
+                <Grid item>
+                  <Box sx={{ mt: 2 }}>
+                    <AnimateButton>
+                      <Button
+                        disableElevation
+                        disabled={isSubmitting}
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                        color="secondary"
+                      >
+                        Submit
+                      </Button>
+                    </AnimateButton>
+                  </Box>
+                </Grid>
               </Grid>
             </form>
           )}

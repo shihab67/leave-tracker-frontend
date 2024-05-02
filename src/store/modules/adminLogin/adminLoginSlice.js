@@ -44,6 +44,18 @@ export const getAllLeaves = createAsyncThunk('adminLoginSlice/getAllLeaves', asy
     });
 });
 
+export const createLeave = createAsyncThunk('adminLoginSlice/createLeave', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.token } };
+  return await axios
+    .post(process.env.REACT_APP_API_URL + 'api/leave-request', data.data, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
 export const getUserInfo = (token) => {
   return async () => {
     const fetchData = async () => {

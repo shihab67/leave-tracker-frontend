@@ -24,7 +24,7 @@ export default function LeaveRequest() {
       );
       if (response.payload && response.payload.data && response.payload.data.length > 0) {
         const events = response.payload.data.map((leave) => {
-          const title = leave.reason.substring(0, 15) + (leave.reason.length > 15 ? '...' : '');
+          const title = leave.leave_type.name.substring(0, 15) + (leave.leave_type.name.length > 15 ? '...' : '');
           return {
             id: leave.id,
             title: title,
