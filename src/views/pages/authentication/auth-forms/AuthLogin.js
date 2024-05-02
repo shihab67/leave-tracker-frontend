@@ -75,7 +75,6 @@ const FirebaseLogin = ({ ...others }) => {
                   // DISPATCH
                   const response = await dispatch(store({ email: values.email, password: values.password }));
                   console.log(response);
-
                   if (
                     response.payload &&
                     response.payload.response &&
@@ -84,13 +83,15 @@ const FirebaseLogin = ({ ...others }) => {
                   ) {
                     setErrors({ submit: response.payload.response.data.message });
                     return;
+                  } else if (response.payload && response.payload.message) {
+                    setErrors({ submit: response.payload.message });
                   } else if (response.payload && response.payload.data && response.payload.data.token && response.payload.data.user) {
                     const token = response.payload.data.token;
                     const userInfo = response.payload.data.user;
 
                     authCtx.login({ ...userInfo, ...{ token: token } });
 
-                    // Navigate to '/admin/home' after login
+                    // Navigate to '/dashboard' after login
                     setTimeout(() => {
                       navigate('/dashboard');
                     }, 2000);
@@ -103,7 +104,6 @@ const FirebaseLogin = ({ ...others }) => {
               });
             }
           } catch (err) {
-            console.log('my error', error);
             // Set status, errors, and submitting state
             setStatus({ success: false });
             setErrors({ submit: error.message });
@@ -114,7 +114,7 @@ const FirebaseLogin = ({ ...others }) => {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-login">Email Address</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-login"
                 type="email"
@@ -122,7 +122,7 @@ const FirebaseLogin = ({ ...others }) => {
                 name="email"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                label="Email Address / Username"
+                label="Email Address"
                 inputProps={{}}
               />
               {touched.email && errors.email && (

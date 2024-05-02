@@ -51,9 +51,6 @@ const Register = () => {
                               <Typography color={theme.palette.secondary.main} gutterBottom variant={matchDownSM ? 'h3' : 'h2'}>
                                 Sign up
                               </Typography>
-                              <Typography variant="caption" fontSize="16px" textAlign={matchDownSM ? 'center' : 'inherit'}>
-                                Enter your credentials to continue
-                              </Typography>
                             </Stack>
                           </Grid>
                         </Grid>
@@ -66,7 +63,7 @@ const Register = () => {
                       </Grid>
                       <Grid item xs={12}>
                         <Grid item container direction="column" alignItems="center" xs={12}>
-                          <Typography component={Link} to="/pages/login/login3" variant="subtitle1" sx={{ textDecoration: 'none' }}>
+                          <Typography component={Link} to="/login" variant="subtitle1" sx={{ textDecoration: 'none' }}>
                             Already have an account?
                           </Typography>
                         </Grid>

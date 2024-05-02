@@ -20,6 +20,18 @@ export const store = createAsyncThunk('adminLoginSlice/store', async (data) => {
     });
 });
 
+export const register = createAsyncThunk('adminLoginSlice/register', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json' } };
+  return await axios
+    .post(process.env.REACT_APP_API_URL + 'api/register', data, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
 export const getUserInfo = (token) => {
   return async () => {
     const fetchData = async () => {
