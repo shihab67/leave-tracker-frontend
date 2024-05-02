@@ -44,7 +44,7 @@ export default function LeaveRequest() {
       <Grid container direction="column">
         <Grid justifyContent={'flex-end'} item xs={12} mb={2}>
           <Button variant="contained" color="secondary" sx={{ float: 'right' }} component={Link} to="/leave-request/create">
-            Leave Request
+            Create New Leave Request
           </Button>
         </Grid>
       </Grid>
