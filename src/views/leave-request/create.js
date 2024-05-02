@@ -1,3 +1,4 @@
+import Textarea from '@mui/joy/Textarea';
 import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
@@ -152,6 +153,17 @@ export default function CreateLeave({ ...others }) {
                   </FormControl>
                 </Grid>
 
+                <Grid md={12} xs={12} item>
+                  <FormControl fullWidth error={Boolean(touched.reason && errors.reason)}>
+                    <Textarea placeholder="Type anything…" />
+                    {touched.reason && errors.reason && (
+                      <FormHelperText error id="standard-weight-helper-text-start-date">
+                        {errors.reason}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
+
                 {errors.submit && (
                   <Box sx={{ mt: 3 }}>
                     <FormHelperText error>{errors.submit}</FormHelperText>
@@ -161,8 +173,6 @@ export default function CreateLeave({ ...others }) {
                 <Box sx={{ mt: 2 }}>
                   <AnimateButton>
                     <Button
-                      o
-                      n
                       disableElevation
                       disabled={isSubmitting}
                       fullWidth
