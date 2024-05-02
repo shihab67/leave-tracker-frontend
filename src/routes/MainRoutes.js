@@ -8,6 +8,7 @@ import Loadable from 'ui-component/Loadable';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const LeaveRequest = Loadable(lazy(() => import('views/leave-request')));
 const CreateLeave = Loadable(lazy(() => import('views/leave-request/create')));
+const LeaveList = Loadable(lazy(() => import('views/leave-request/list')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -27,12 +28,16 @@ const MainRoutes = {
       path: 'leave-request',
       children: [
         {
-          path: '',
+          path: 'leave-calendar',
           element: <LeaveRequest />
         },
         {
           path: 'create',
           element: <CreateLeave />
+        },
+        {
+          path: 'leave-list',
+          element: <LeaveList />
         }
       ]
     }

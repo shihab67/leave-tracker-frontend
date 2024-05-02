@@ -20,10 +20,32 @@ const dashboard = {
     {
       id: 'leave-request',
       title: 'Leave Request',
-      type: 'item',
-      url: '/leave-request',
+      type: 'collapse',
+      url: '',
       icon: icons.IconForms,
-      breadcrumbs: false
+      children: [
+        {
+          id: 'leave-calendar',
+          title: 'Leave Calendar',
+          type: 'item',
+          url: '/leave-request/leave-calendar',
+          breadcrumbs: false
+        },
+        {
+          id: 'create',
+          title: 'Create Leave Request',
+          type: 'item',
+          url: '/leave-request/create',
+          breadcrumbs: true
+        },
+        {
+          id: 'leave-list',
+          title: 'Leave List',
+          type: 'item',
+          url: '/leave-request/leave-list',
+          breadcrumbs: true
+        }
+      ]
     }
   ]
 };

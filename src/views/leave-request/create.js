@@ -51,12 +51,10 @@ export default function CreateLeave({ ...others }) {
               if (scriptedRef.current) {
                 setStatus({ success: true });
                 setSubmitting(false);
-                console.log(values);
 
                 try {
                   // DISPATCH
                   const response = await dispatch(createLeave({ data: values, token: authCtx.currentUser.token }));
-                  console.log(response);
                   if (
                     response.payload &&
                     response.payload.response &&
@@ -88,7 +86,7 @@ export default function CreateLeave({ ...others }) {
 
                     // Navigate to '/leave-request' after login
                     setTimeout(() => {
-                      navigate('/leave-request', { replace: true });
+                      navigate('/leave-request/leave-calendar', { replace: true });
                     }, 3000);
                   } else {
                     setErrors({ submit: 'Something went wrong' });
