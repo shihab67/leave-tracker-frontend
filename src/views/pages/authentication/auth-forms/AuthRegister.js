@@ -105,7 +105,6 @@ const FirebaseRegister = ({ ...others }) => {
                     password_confirmation: values.password_confirmation
                   })
                 );
-                console.log(response);
                 if (
                   response.payload &&
                   response.payload.response &&
