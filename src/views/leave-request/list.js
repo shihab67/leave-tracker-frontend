@@ -52,8 +52,8 @@ export default function LeaveList({ ...others }) {
     },
     {
       name: 'Action',
-      selector: (row) => row.id,
-      cell: (row) => handleActions(row.id)
+      selector: (row) => row.action,
+      cell: (row) => handleActions(row.id, row.user_id)
     }
   ];
   const dispatch = useAppDispatch();
@@ -101,7 +101,7 @@ export default function LeaveList({ ...others }) {
     }
   };
 
-  const handleActions = (id) => {
+  const handleActions = (id, user_id) => {
     return (
       <JoyCssVarsProvider>
         <CssBaseline enableColorScheme />
@@ -113,9 +113,12 @@ export default function LeaveList({ ...others }) {
             <MenuItem component={Link} to={`/leave-request/view/${id}`}>
               View
             </MenuItem>
-            <MenuItem component={Link} to={`/leave-request/edit/${id}`}>
-              Edit
-            </MenuItem>
+            {authCtx.currentUser.role.id === 1 ||
+              (authCtx.currentUser.role.id === 2 && user_id !== authCtx.currentUser.id && (
+                <MenuItem component={Link} to={`/leave-request/edit/${id}`}>
+                  Edit
+                </MenuItem>
+              ))}
           </Menu>
         </Dropdown>
       </JoyCssVarsProvider>
@@ -133,6 +136,7 @@ export default function LeaveList({ ...others }) {
         const events = response.payload.data.map((leave, index) => {
           return {
             id: leave.id,
+            user_id: leave.user_id,
             serial: ++index,
             employee: leave.user.name,
             leaveType: leave.leave_type.name,
