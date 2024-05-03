@@ -9,6 +9,8 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 const LeaveRequest = Loadable(lazy(() => import('views/leave-request')));
 const CreateLeave = Loadable(lazy(() => import('views/leave-request/create')));
 const LeaveList = Loadable(lazy(() => import('views/leave-request/list')));
+const LeaveDetails = Loadable(lazy(() => import('views/leave-request/details')));
+const EditLeave = Loadable(lazy(() => import('views/leave-request/edit')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -38,6 +40,14 @@ const MainRoutes = {
         {
           path: 'leave-list/:type',
           element: <LeaveList />
+        },
+        {
+          path: 'view/:id',
+          element: <LeaveDetails />
+        },
+        {
+          path: 'edit/:id',
+          element: <EditLeave />
         }
       ]
     }

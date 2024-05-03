@@ -102,7 +102,6 @@ export default function LeaveList({ ...others }) {
   };
 
   const handleActions = (id) => {
-    console.log(id);
     return (
       <JoyCssVarsProvider>
         <CssBaseline enableColorScheme />
