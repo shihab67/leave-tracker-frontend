@@ -36,7 +36,7 @@ const MainRoutes = {
           element: <CreateLeave />
         },
         {
-          path: 'leave-list',
+          path: 'leave-list/:type',
           element: <LeaveList />
         }
       ]

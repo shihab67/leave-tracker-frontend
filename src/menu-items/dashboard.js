@@ -36,14 +36,14 @@ const dashboard = {
           title: 'Create Leave Request',
           type: 'item',
           url: '/leave-request/create',
-          breadcrumbs: true
+          breadcrumbs: false
         },
         {
           id: 'leave-list',
           title: 'Leave List',
           type: 'item',
-          url: '/leave-request/leave-list',
-          breadcrumbs: true
+          url: '/leave-request/leave-list/pending',
+          breadcrumbs: false
         }
       ]
     }

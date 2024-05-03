@@ -1,14 +1,24 @@
+import { MoreVert } from '@mui/icons-material';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
-import Badge from '@mui/joy/Badge';
+import Chip from '@mui/joy/Chip';
+import Dropdown from '@mui/joy/Dropdown';
+import IconButton from '@mui/joy/IconButton';
+import Menu from '@mui/joy/Menu';
+import MenuButton from '@mui/joy/MenuButton';
+import MenuItem from '@mui/joy/MenuItem';
+import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import { Grid } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import React, { useContext, useEffect, useState } from 'react';
-import DataTable from 'react-data-table-component';
+import { Link, useParams } from 'react-router-dom';
 import { getAllLeaves } from 'store/modules/adminLogin/adminLoginSlice';
 import AuthContext from 'store/modules/authContext';
 import { useAppDispatch } from 'store/reducer';
 import MainCard from 'ui-component/cards/MainCard';
+import LeaveTabs from './partials/tab';
 
 export default function LeaveList({ ...others }) {
+  const params = useParams();
   const sortIcon = <ArrowDownward />;
   const columns = [
     {
@@ -33,11 +43,17 @@ export default function LeaveList({ ...others }) {
     },
     {
       name: 'Status',
-      selector: (row) => row.status
+      selector: (row) => row.status,
+      cell: (row) => handleStats(row.status)
     },
     {
       name: 'Approved By',
       selector: (row) => row.approvedBy
+    },
+    {
+      name: 'Action',
+      selector: (row) => row.id,
+      cell: (row) => handleActions(row.id)
     }
   ];
   const dispatch = useAppDispatch();
@@ -48,48 +64,83 @@ export default function LeaveList({ ...others }) {
     switch (status) {
       case 'pending':
         return (
-          <Badge color="warning" size="md" variant="outlined">
-            Pending
-          </Badge>
+          <JoyCssVarsProvider>
+            <CssBaseline enableColorScheme />
+            <Chip color="warning" variant="soft">
+              Pending
+            </Chip>
+          </JoyCssVarsProvider>
         );
       case 'approved':
         return (
-          <Badge color="success" size="md" variant="outlined">
-            Approved
-          </Badge>
+          <JoyCssVarsProvider>
+            <CssBaseline enableColorScheme />
+            <Chip color="success" variant="soft">
+              Approved
+            </Chip>
+          </JoyCssVarsProvider>
         );
       case 'rejected':
         return (
-          <Badge color="danger" size="md" variant="outlined">
-            Rejected
-          </Badge>
+          <JoyCssVarsProvider>
+            <CssBaseline enableColorScheme />
+            <Chip color="danger" variant="soft">
+              Rejected
+            </Chip>
+          </JoyCssVarsProvider>
         );
       default:
         return (
-          <Badge color="warning" size="md" variant="outlined">
-            Pending
-          </Badge>
+          <JoyCssVarsProvider>
+            <CssBaseline enableColorScheme />
+            <Chip color="warning" variant="soft">
+              Pending
+            </Chip>
+          </JoyCssVarsProvider>
         );
     }
+  };
+
+  const handleActions = (id) => {
+    console.log(id);
+    return (
+      <JoyCssVarsProvider>
+        <CssBaseline enableColorScheme />
+        <Dropdown>
+          <MenuButton slots={{ root: IconButton }} slotProps={{ root: { variant: 'outlined', color: 'neutral' } }}>
+            <MoreVert />
+          </MenuButton>
+          <Menu>
+            <MenuItem component={Link} to={`/leave-request/view/${id}`}>
+              View
+            </MenuItem>
+            <MenuItem component={Link} to={`/leave-request/edit/${id}`}>
+              Edit
+            </MenuItem>
+          </Menu>
+        </Dropdown>
+      </JoyCssVarsProvider>
+    );
   };
   useEffect(() => {
     const fetchData = async () => {
       const response = await dispatch(
         getAllLeaves({
+          type: params.type || 'pending',
           token: authCtx.currentUser.token
         })
       );
-      if (response.payload && response.payload.data && response.payload.data.length > 0) {
+      if (response.payload && response.payload.data) {
         const events = response.payload.data.map((leave, index) => {
-          console.log(leave);
           return {
+            id: leave.id,
             serial: ++index,
             employee: leave.user.name,
             leaveType: leave.leave_type.name,
             startDate: leave.start_date,
             endDate: leave.end_date,
-            status: handleStats(leave.status),
-            approvedBy: leave.approved_by?.name
+            status: leave.status,
+            approvedBy: leave.approved_by?.name || '---'
           };
         });
         setData(events);
@@ -97,13 +148,13 @@ export default function LeaveList({ ...others }) {
     };
 
     fetchData();
-  }, [dispatch, authCtx.currentUser.token, setData]);
+  }, [dispatch, authCtx.currentUser.token, setData, params.type]);
   return (
     <>
       <MainCard title="Leave List" {...others}>
         <Grid container>
-          <Grid md={12} xs={12} item>
-            <DataTable pagination responsive sortIcon={sortIcon} columns={columns} data={data} />
+          <Grid md={12} xs={12} mb={3}>
+            <LeaveTabs sortIcon={sortIcon} data={data} columns={columns} type={params.type} />
           </Grid>
         </Grid>
       </MainCard>
