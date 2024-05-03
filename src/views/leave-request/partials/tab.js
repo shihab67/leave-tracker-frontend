@@ -42,7 +42,7 @@ export default function LeaveTabs(props) {
           </Tab>
         </TabList>
         <TabPanel value={handleDefaultValue()}>
-            <DataTable pagination responsive sortIcon={props.sortIcon} columns={props.columns} data={props.data} />
+          <DataTable pagination responsive sortIcon={props.sortIcon} columns={props.columns} data={props.data} />
         </TabPanel>
       </Tabs>
     </JoyCssVarsProvider>
