@@ -128,4 +128,16 @@ export const getStat = createAsyncThunk('adminLoginSlice/getStat', async (data) 
     });
 });
 
+export const updateUserPassword = createAsyncThunk('adminLoginSlice/updateUserPassword', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.token } };
+  return await axios
+    .post(process.env.REACT_APP_API_URL + 'api/user/update-password', data.data, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
 export default adminLoginSlice.reducer;
