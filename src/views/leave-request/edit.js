@@ -14,6 +14,7 @@ import { useAppDispatch } from 'store/reducer';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import * as Yup from 'yup';
+import Breadcrumb from './partials/breadcrumb';
 
 export default function EditLeave({ others }) {
   const scriptedRef = useScriptRef();
@@ -23,6 +24,15 @@ export default function EditLeave({ others }) {
   const navigate = useNavigate();
   const params = useParams();
   const [leaveStatus, setLeaveStatus] = useState('');
+  const menu = {
+    list: [
+      {
+        title: 'Leave Request',
+        url: '/leave-request/leave-list/pending'
+      }
+    ],
+    active: 'Edit Leave Request'
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +53,8 @@ export default function EditLeave({ others }) {
 
   return (
     <>
+      <Breadcrumb menu={menu} />
+
       <MainCard title="Edit Leave Request" {...others}>
         <Formik
           initialValues={{
@@ -58,7 +70,6 @@ export default function EditLeave({ others }) {
               if (scriptedRef.current) {
                 setStatus({ success: true });
                 setSubmitting(false);
-                console.log(values);
                 try {
                   // DISPATCH
                   const response = await dispatch(
@@ -67,7 +78,6 @@ export default function EditLeave({ others }) {
                       token: authCtx.currentUser.token
                     })
                   );
-                  console.log(response);
                   if (
                     response.payload &&
                     response.payload.response &&

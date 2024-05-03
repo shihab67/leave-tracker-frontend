@@ -43,7 +43,6 @@ export default function LeaveDetails({ others }) {
   }, [dispatch, authCtx.currentUser.token, params.id]);
   return (
     <>
-      {console.log(data)}
       <Breadcrumb menu={menu} />
 
       <MainCard title="Leave Details" {...others}>
