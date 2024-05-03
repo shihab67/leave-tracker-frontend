@@ -13,6 +13,7 @@ const LeaveDetails = Loadable(lazy(() => import('views/leave-request/details')))
 const EditLeave = Loadable(lazy(() => import('views/leave-request/edit')));
 const Users = Loadable(lazy(() => import('views/users')));
 const EditUser = Loadable(lazy(() => import('views/users/edit')));
+const UserProfile = Loadable(lazy(() => import('views/user/profile')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -63,6 +64,15 @@ const MainRoutes = {
         {
           path: 'edit/:id',
           element: <EditUser />
+        }
+      ]
+    },
+    {
+      path: 'user',
+      children: [
+        {
+          path: 'profile',
+          element: <UserProfile />
         }
       ]
     }
