@@ -1,50 +1,45 @@
-import { Textarea } from '@mui/joy';
-import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/system';
 import { Formik } from 'formik';
 import useScriptRef from 'hooks/useScriptRef';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Bounce, toast } from 'react-toastify';
-import { approveLeave, getLeave } from 'store/modules/adminLogin/adminLoginSlice';
+import { getUser, updateUser } from 'store/modules/adminLogin/adminLoginSlice';
 import AuthContext from 'store/modules/authContext';
 import { useAppDispatch } from 'store/reducer';
 import MainCard from 'ui-component/cards/MainCard';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import Breadcrumb from 'views/leave-request/partials/breadcrumb';
 import * as Yup from 'yup';
-import Breadcrumb from './partials/breadcrumb';
 
-export default function EditLeave({ others }) {
+export default function EditUser({ others }) {
   const scriptedRef = useScriptRef();
-  const [remarks, setRemarks] = useState('');
   const dispatch = useAppDispatch();
   const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
   const params = useParams();
-  const [leaveStatus, setLeaveStatus] = useState('');
+  const [status, setStatus] = useState('');
   const menu = {
     list: [
       {
-        title: 'Leave Request',
-        url: '/leave-request/leave-list/pending'
+        title: 'Users',
+        url: '/users'
       }
     ],
-    active: 'Edit Leave Request'
+    active: 'Edit User'
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await dispatch(
-        getLeave({
+        getUser({
           id: params.id,
           token: authCtx.currentUser.token
         })
       );
       if (response.payload && response.payload.status && response.payload.status === 'success' && response.payload.data) {
-        setLeaveStatus(response.payload.data.status);
-        setRemarks(response.payload.data.remarks);
+        setStatus(response.payload.data.status);
       }
     };
 
@@ -55,15 +50,14 @@ export default function EditLeave({ others }) {
     <>
       <Breadcrumb menu={menu} />
 
-      <MainCard title="Edit Leave Request" {...others}>
+      <MainCard title="Edit User" {...others}>
         <Formik
           initialValues={{
             status: '',
-            remarks: '',
             submit: null
           }}
           validationSchema={Yup.object().shape({
-            status: Yup.string().required('Status required')
+            status: Yup.string().required('Status is required')
           })}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
             try {
@@ -73,8 +67,8 @@ export default function EditLeave({ others }) {
                 try {
                   // DISPATCH
                   const response = await dispatch(
-                    approveLeave({
-                      data: { leave_request_id: params.id, status: values.status, remarks },
+                    updateUser({
+                      data: { user_id: params.id, status: values.status },
                       token: authCtx.currentUser.token
                     })
                   );
@@ -109,7 +103,7 @@ export default function EditLeave({ others }) {
 
                     // Navigate to '/leave-request' after login
                     setTimeout(() => {
-                      navigate('/leave-request/leave-list/pending', { replace: true });
+                      navigate('/users', { replace: true });
                     }, 1000);
                   } else {
                     setErrors({ submit: 'Something went wrong' });
@@ -138,15 +132,15 @@ export default function EditLeave({ others }) {
                       id="demo-simple-select"
                       name="status"
                       label="Status"
-                      value={leaveStatus}
+                      value={status}
                       onChange={(newValue) => {
-                        setLeaveStatus(newValue.target.value);
+                        setStatus(newValue.target.value);
                         handleChange({ target: { name: 'status', value: newValue.target.value } });
                       }}
                     >
-                      <MenuItem value={'pending'}>Pending</MenuItem>
-                      <MenuItem value={'approved'}>Approved</MenuItem>
-                      <MenuItem value={'rejected'}>Rejected</MenuItem>
+                      <MenuItem value={'active'}>Active</MenuItem>
+                      <MenuItem value={'inactive'}>Inactive</MenuItem>
+                      <MenuItem value={'suspended'}>Suspended</MenuItem>
                     </Select>
                   </FormControl>
                   {touched.status && errors.status && (
@@ -154,30 +148,6 @@ export default function EditLeave({ others }) {
                       {errors.status}
                     </FormHelperText>
                   )}
-                </Grid>
-
-                <Grid md={12} xs={12} item>
-                  <FormControl fullWidth error={Boolean(touched.remarks && errors.remarks)}>
-                    <JoyCssVarsProvider>
-                      <CssBaseline enableColorScheme />
-                      <Textarea
-                        placeholder="Remarks..."
-                        variant="outlined"
-                        minRows={4}
-                        name="remarks"
-                        value={remarks}
-                        onChange={(newValue) => {
-                          setRemarks(newValue.target.value);
-                          handleChange({ target: { name: 'remarks', value: newValue.target.value } });
-                        }}
-                      />
-                    </JoyCssVarsProvider>
-                    {touched.remarks && errors.remarks && (
-                      <FormHelperText error id="standard-weight-helper-text-start-date">
-                        {errors.remarks}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
                 </Grid>
 
                 <Grid md={12} xs={12} item>

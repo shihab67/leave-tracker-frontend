@@ -68,7 +68,7 @@ export default function Users({ ...others }) {
         return (
           <JoyCssVarsProvider>
             <CssBaseline enableColorScheme />
-            <Chip color="success" variant="soft">
+            <Chip color="warning" variant="soft">
               Inactive
             </Chip>
           </JoyCssVarsProvider>

@@ -92,6 +92,30 @@ export const getAllUsers = createAsyncThunk('adminLoginSlice/getAllUsers', async
     });
 });
 
+export const getUser = createAsyncThunk('adminLoginSlice/getUser', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.token } };
+  return await axios
+    .get(process.env.REACT_APP_API_URL + 'api/user/' + data.id, null, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
+export const updateUser = createAsyncThunk('adminLoginSlice/updateUser', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.token } };
+  return await axios
+    .post(process.env.REACT_APP_API_URL + 'api/user/update-status', data.data, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
 export const getUserInfo = (token) => {
   return async () => {
     const fetchData = async () => {
