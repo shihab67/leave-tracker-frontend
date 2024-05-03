@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard, IconForms } from '@tabler/icons-react';
+import { IconDashboard, IconForms, IconUsers } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard, IconForms };
+const icons = { IconDashboard, IconForms, IconUsers };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -46,6 +46,14 @@ const dashboard = {
           breadcrumbs: false
         }
       ]
+    },
+    {
+      id: 'users',
+      title: 'Users',
+      type: 'item',
+      url: '/users',
+      icon: icons.IconUsers,
+      breadcrumbs: false
     }
   ]
 };

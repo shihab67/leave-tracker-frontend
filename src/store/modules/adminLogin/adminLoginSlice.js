@@ -80,6 +80,18 @@ export const approveLeave = createAsyncThunk('adminLoginSlice/approveLeave', asy
     });
 });
 
+export const getAllUsers = createAsyncThunk('adminLoginSlice/getAllUsers', async (data) => {
+  const header = { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.token } };
+  return await axios
+    .get(process.env.REACT_APP_API_URL + 'api/users/', null, header)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error;
+    });
+});
+
 export const getUserInfo = (token) => {
   return async () => {
     const fetchData = async () => {
